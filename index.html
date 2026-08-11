@@ -90,41 +90,6 @@
     z-index: -1;
   }
 
-  /* BOTÃO WHATSAPP FLUTUANTE */
-  .wpp-float {
-    position: fixed; bottom: 28px; right: 28px; z-index: 999;
-    width: 60px; height: 60px; border-radius: 50%;
-    background: #25D366;
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 4px 20px rgba(37,211,102,0.5);
-    text-decoration: none;
-    animation: wpp-bounce 2.5s ease-in-out infinite;
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-  .wpp-float:hover {
-    transform: scale(1.12);
-    box-shadow: 0 8px 32px rgba(37,211,102,0.7);
-    animation: none;
-  }
-  .wpp-float svg { width: 32px; height: 32px; fill: white; }
-
-  /* TOOLTIP DO BOTÃO */
-  .wpp-float::before {
-    content: 'Fale comigo!';
-    position: absolute; right: 72px;
-    background: var(--gray); color: var(--white);
-    font-size: 12px; font-weight: 600; white-space: nowrap;
-    padding: 8px 14px; border-radius: 4px;
-    opacity: 0; pointer-events: none;
-    transition: opacity 0.2s;
-  }
-  .wpp-float:hover::before { opacity: 1; }
-
-  @keyframes wpp-bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
-  }
-
   /* SCROLL REVEAL */
   .reveal {
     opacity: 0; transform: translateY(32px);
@@ -167,8 +132,9 @@
     font-size: clamp(72px, 14vw, 160px);
     line-height: 0.9; letter-spacing: -0.01em; color: var(--white);
     animation: fadeUp 0.7s 0.1s ease both;
+    min-height: calc(clamp(72px, 14vw, 160px) * 0.9 * 2);
   }
-  h1 span { color: var(--yellow); display: block; }
+  h1 span { color: var(--yellow); display: block; min-height: calc(clamp(72px, 14vw, 160px) * 0.9); }
 
   .hero-sub {
     margin-top: 24px;
@@ -976,12 +942,235 @@ Hoje trabalho com atendimento personalizado, focado na sua realidade, no seu obj
 
 </script>
 
-<!-- BOTÃO WHATSAPP FLUTUANTE -->
-<a href="https://wa.me/5511944655777?text=Olá%20Daniel!%20Vim%20pelo%20site%20e%20gostaria%20de%20saber%20mais%20sobre%20os%20seus%20serviços." target="_blank" class="wpp-float" aria-label="WhatsApp">
-  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-  </svg>
-</a>
+<!-- CHAT WHATSAPP FLUTUANTE -->
+<div class="wpp-chat-wrap">
+
+  <!-- CAIXINHA DE CHAT -->
+  <div class="wpp-chat-box" id="wpp-chat-box">
+    <div class="wpp-chat-header">
+      <div class="wpp-chat-avatar">DN</div>
+      <div class="wpp-chat-info">
+        <div class="wpp-chat-name">Daniel Noffs</div>
+        <div class="wpp-chat-status">
+          <span class="wpp-status-dot"></span> Online agora
+        </div>
+      </div>
+      <button class="wpp-chat-close" onclick="toggleChat()">✕</button>
+    </div>
+
+    <div class="wpp-chat-body">
+      <div class="wpp-chat-bubble">
+        <p>Olá! 👋 Sou o Daniel Noffs, personal trainer.</p>
+        <p>Como posso te ajudar hoje?</p>
+        <span class="wpp-bubble-time">agora</span>
+      </div>
+    </div>
+
+    <div class="wpp-chat-footer">
+      <input
+        type="text"
+        id="wpp-msg-input"
+        class="wpp-chat-input"
+        placeholder="Digite sua mensagem..."
+        onkeydown="if(event.key==='Enter') sendWpp()"
+      >
+      <button class="wpp-chat-send" onclick="sendWpp()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- BOTÃO FLUTUANTE -->
+  <button class="wpp-float-btn" onclick="toggleChat()" id="wpp-float-btn" aria-label="Abrir chat WhatsApp">
+    <svg class="wpp-icon-open" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path fill="white" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+    <svg class="wpp-icon-close" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
+    <span class="wpp-notification-dot"></span>
+  </button>
+
+</div>
+
+<style>
+  /* WRAPPER */
+  .wpp-chat-wrap {
+    position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+    display: flex; flex-direction: column; align-items: flex-end; gap: 12px;
+  }
+
+  /* BOTÃO FLUTUANTE */
+  .wpp-float-btn {
+    width: 62px; height: 62px; border-radius: 50%;
+    background: #25D366; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 24px rgba(37,211,102,0.55);
+    animation: wpp-bounce 2.5s ease-in-out infinite;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+  }
+  .wpp-float-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 32px rgba(37,211,102,0.7);
+    animation: none;
+  }
+  .wpp-float-btn svg { width: 30px; height: 30px; transition: opacity 0.2s, transform 0.2s; }
+  .wpp-icon-open { opacity: 1; transform: scale(1); }
+  .wpp-icon-close { position: absolute; opacity: 0; transform: scale(0.5); }
+  .wpp-float-btn.open .wpp-icon-open { opacity: 0; transform: scale(0.5); }
+  .wpp-float-btn.open .wpp-icon-close { opacity: 1; transform: scale(1); }
+  .wpp-float-btn.open { animation: none; background: #1a1a1a; box-shadow: 0 4px 24px rgba(0,0,0,0.4); }
+
+  /* BOLINHA DE NOTIFICAÇÃO */
+  .wpp-notification-dot {
+    position: absolute; top: 4px; right: 4px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: #ff3b30; border: 2px solid #25D366;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+  .wpp-float-btn.open .wpp-notification-dot { display: none; }
+  @keyframes pulse-dot {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+  }
+
+  @keyframes wpp-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  /* CAIXA DE CHAT */
+  .wpp-chat-box {
+    width: 320px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 48px rgba(0,0,0,0.35);
+    overflow: hidden;
+    display: none; flex-direction: column;
+    animation: chat-open 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
+    transform-origin: bottom right;
+  }
+  .wpp-chat-box.open { display: flex; }
+
+  @keyframes chat-open {
+    from { opacity: 0; transform: scale(0.85) translateY(16px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  /* HEADER DO CHAT */
+  .wpp-chat-header {
+    background: #075E54;
+    padding: 14px 16px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .wpp-chat-avatar {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: #25D366;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; color: white;
+    flex-shrink: 0;
+  }
+  .wpp-chat-info { flex: 1; }
+  .wpp-chat-name { font-size: 15px; font-weight: 700; color: white; }
+  .wpp-chat-status { font-size: 12px; color: rgba(255,255,255,0.7); display: flex; align-items: center; gap: 5px; margin-top: 2px; }
+  .wpp-status-dot { width: 7px; height: 7px; border-radius: 50%; background: #25D366; display: inline-block; }
+  .wpp-chat-close {
+    background: none; border: none; color: rgba(255,255,255,0.7);
+    font-size: 18px; cursor: pointer; padding: 4px; line-height: 1;
+    transition: color 0.2s;
+  }
+  .wpp-chat-close:hover { color: white; }
+
+  /* CORPO DO CHAT */
+  .wpp-chat-body {
+    padding: 16px;
+    background: #ECE5DD url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' opacity='0.03'%3E%3C/svg%3E");
+    min-height: 120px;
+  }
+  .wpp-chat-bubble {
+    background: white;
+    border-radius: 0 8px 8px 8px;
+    padding: 10px 14px;
+    max-width: 85%;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    position: relative;
+  }
+  .wpp-chat-bubble::before {
+    content: '';
+    position: absolute; top: 0; left: -8px;
+    border: 8px solid transparent;
+    border-top-color: white;
+    border-left: none;
+  }
+  .wpp-chat-bubble p { font-size: 14px; color: #111; line-height: 1.5; margin-bottom: 4px; }
+  .wpp-chat-bubble p:last-of-type { margin-bottom: 0; }
+  .wpp-bubble-time { font-size: 11px; color: #999; display: block; text-align: right; margin-top: 4px; }
+
+  /* FOOTER DO CHAT */
+  .wpp-chat-footer {
+    padding: 10px 12px;
+    background: #F0F0F0;
+    display: flex; align-items: center; gap: 8px;
+    border-top: 1px solid #ddd;
+  }
+  .wpp-chat-input {
+    flex: 1; border: none; border-radius: 20px;
+    background: white; padding: 10px 16px;
+    font-size: 14px; outline: none; color: #111;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .wpp-chat-input::placeholder { color: #999; }
+  .wpp-chat-send {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: #25D366; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: background 0.2s;
+  }
+  .wpp-chat-send:hover { background: #1da851; }
+  .wpp-chat-send svg { width: 18px; height: 18px; color: white; }
+
+  @media (max-width: 400px) {
+    .wpp-chat-box { width: calc(100vw - 32px); }
+    .wpp-chat-wrap { right: 16px; bottom: 16px; }
+  }
+</style>
+
+<script>
+  function toggleChat() {
+    const box = document.getElementById('wpp-chat-box');
+    const btn = document.getElementById('wpp-float-btn');
+    const isOpen = box.classList.contains('open');
+    box.classList.toggle('open');
+    btn.classList.toggle('open');
+    if (!isOpen) {
+      setTimeout(() => document.getElementById('wpp-msg-input').focus(), 300);
+    }
+  }
+
+  function sendWpp() {
+    const input = document.getElementById('wpp-msg-input');
+    const msg = input.value.trim();
+    if (!msg) return;
+    const url = `https://wa.me/5511944655777?text=${encodeURIComponent(msg)}`;
+    window.open(url, '_blank');
+    input.value = '';
+  }
+
+  // Abre automaticamente após 4 segundos
+  setTimeout(() => {
+    const box = document.getElementById('wpp-chat-box');
+    const btn = document.getElementById('wpp-float-btn');
+    if (!box.classList.contains('open')) {
+      box.classList.add('open');
+      btn.classList.add('open');
+    }
+  }, 4000);
+</script>
 
 </body>
 </html>
