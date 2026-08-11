@@ -75,15 +75,83 @@
   }
 
   /* HERO */
+  /* VÍDEO DE FUNDO */
+  .hero-video {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    object-fit: cover; z-index: -2;
+    opacity: 0.45;
+    filter: grayscale(30%);
+  }
+  .hero-overlay {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background:
+      linear-gradient(to top, #252528 0%, rgba(37,37,40,0.6) 40%, rgba(37,37,40,0.3) 100%);
+    z-index: -1;
+  }
+
+  /* BOTÃO WHATSAPP FLUTUANTE */
+  .wpp-float {
+    position: fixed; bottom: 28px; right: 28px; z-index: 999;
+    width: 60px; height: 60px; border-radius: 50%;
+    background: #25D366;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 20px rgba(37,211,102,0.5);
+    text-decoration: none;
+    animation: wpp-bounce 2.5s ease-in-out infinite;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .wpp-float:hover {
+    transform: scale(1.12);
+    box-shadow: 0 8px 32px rgba(37,211,102,0.7);
+    animation: none;
+  }
+  .wpp-float svg { width: 32px; height: 32px; fill: white; }
+
+  /* TOOLTIP DO BOTÃO */
+  .wpp-float::before {
+    content: 'Fale comigo!';
+    position: absolute; right: 72px;
+    background: var(--gray); color: var(--white);
+    font-size: 12px; font-weight: 600; white-space: nowrap;
+    padding: 8px 14px; border-radius: 4px;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .wpp-float:hover::before { opacity: 1; }
+
+  @keyframes wpp-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  /* SCROLL REVEAL */
+  .reveal {
+    opacity: 0; transform: translateY(32px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-left {
+    opacity: 0; transform: translateX(-32px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal-left.visible { opacity: 1; transform: translateX(0); }
+  .reveal-right {
+    opacity: 0; transform: translateX(32px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+  /* PARALLAX */
+  .parallax-wrap { overflow: hidden; }
+
   header {
     min-height: 78svh;
     display: flex; flex-direction: column; justify-content: flex-end;
     padding: 14vh 6vw 4vh;
-    background:
-      linear-gradient(to top, #252528 0%, rgba(37,37,40,0.5) 40%, transparent 70%),
-      linear-gradient(135deg, rgba(255,207,5,0.06) 0%, transparent 60%);
     border-bottom: 1px solid var(--gray2);
     overflow: hidden;
+    position: relative;
   }
 
   .hero-tag {
@@ -445,8 +513,14 @@
 
 <!-- HERO -->
 <header>
+  <!-- VÍDEO DE FUNDO -->
+  <video class="hero-video" autoplay muted loop playsinline>
+    <source src="bg-video.mp4" type="video/mp4">
+  </video>
+  <div class="hero-overlay"></div>
+
   <div class="hero-tag">Personal Trainer</div>
-  <h1>Daniel<span>Noffs</span></h1>
+  <h1 id="hero-title"></h1>
   <p class="hero-sub">Força, disciplina e resultado — com quem tem mais de 20 anos transformando corpos e vidas.</p>
   <div class="hero-badges">
     <div class="badge highlight">Pós-Graduado</div>
@@ -460,11 +534,11 @@
 
 <!-- BIO COM FOTO -->
 <section class="bio">
-  <div class="bio-photo">
+  <div class="bio-photo reveal-left">
     <img src="images/daniel.jpg" alt="Daniel Noffs">
   </div>
 
-  <div class="bio-text">
+  <div class="bio-text reveal-right">
     <h2>Quem é o Daniel</h2>
     <p>Sou formado em Educação Física pela Uniban (2005) e pós-graduado em fisiologia do exercício, musculação e treinamento de força (2024). Há mais de duas décadas, ajudo pessoas a transformarem sua relação com o treino, a saúde e a autoestima.
     <p>Ao longo da minha trajetória, já acompanhei alunos de diferentes perfis e fases da vida, incluindo o público 50+, sempre com foco em mais disposição, autonomia, confiança e qualidade de vida.
@@ -472,15 +546,15 @@ Hoje trabalho com atendimento personalizado, focado na sua realidade, no seu obj
     <p>Sou de Santo André/SP, casado, pai da Lara e de duas dogs que completam nossa família. 🐾</p>
     <div class="stats-row">
       <div class="stat">
-        <div class="stat-num">20+</div>
+        <div class="stat-num" data-count="20" data-suffix="+">0+</div>
         <div class="stat-label">Anos na área</div>
       </div>
       <div class="stat">
-        <div class="stat-num">3k+</div>
+        <div class="stat-num" data-count="3000" data-suffix="k+">0</div>
         <div class="stat-label">alunos</div>
       </div>
       <div class="stat">
-        <div class="stat-num">100%</div>
+        <div class="stat-num" data-count="100" data-suffix="%">0%</div>
         <div class="stat-label">Personalizado</div>
       </div>
     </div>
@@ -489,8 +563,8 @@ Hoje trabalho com atendimento personalizado, focado na sua realidade, no seu obj
 
 <!-- PLANOS -->
 <section class="plans-section">
-  <div class="section-label">Investimento</div>
-  <div class="section-title">Planos e Valores</div>
+  <div class="section-label reveal">Investimento</div>
+  <div class="section-title reveal">Planos e Valores</div>
 
   <div class="tab-switcher">
     <button class="tab-btn active" onclick="switchTab('digital', this)">
@@ -643,8 +717,8 @@ Hoje trabalho com atendimento personalizado, focado na sua realidade, no seu obj
 
 <!-- DEPOIMENTOS -->
 <section class="testimonials-section">
-  <div class="section-label">Resultados reais</div>
-  <div class="section-title">O que dizem os alunos</div>
+  <div class="section-label reveal">Resultados reais</div>
+  <div class="section-title reveal">O que dizem os alunos</div>
   <div class="carousel-wrap">
     <button class="carousel-btn" onclick="moveCarousel(-1)">‹</button>
     <div class="carousel-track">
@@ -659,8 +733,8 @@ Hoje trabalho com atendimento personalizado, focado na sua realidade, no seu obj
 
 <!-- CTA -->
 <section class="cta-section">
-  <div class="section-label">Próximo passo</div>
-  <div class="section-title">Bora começar?</div>
+  <div class="section-label reveal">Próximo passo</div>
+  <div class="section-title reveal">Bora começar?</div>
   <p>Me envie uma mensagem no WhatsApp para agendarmos sua primeira aula ou avaliação.</p>
   <a class="btn-wpp" href="https://wa.me/5511944655777?text=Ol%C3%A1%20Daniel!%20Vi%20seu%20site%20e%20tenho%20interesse%20em%20saber%20mais%20informa%C3%A7%C3%B5es%20sobre%20os%20treinos." target="_blank">
     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.124.555 4.118 1.528 5.846L0 24l6.337-1.508A11.955 11.955 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.81 9.81 0 01-5.015-1.378l-.36-.214-3.732.888.939-3.634-.235-.374A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182c5.43 0 9.818 4.388 9.818 9.818 0 5.43-4.388 9.818-9.818 9.818z"/></svg>
@@ -802,7 +876,111 @@ Hoje trabalho com atendimento personalizado, focado na sua realidade, no seu obj
 
   // Inicia
   loadTestimonials();
+
+  // ==========================================
+  // TYPEWRITER NO HERO
+  // ==========================================
+  function typeWriter(el, text1, text2, speed = 80) {
+    let i = 0;
+    el.innerHTML = '';
+    const span1 = document.createElement('span');
+    const span2 = document.createElement('span');
+    span2.style.color = 'var(--yellow)';
+    span2.style.display = 'block';
+    el.appendChild(span1);
+    el.appendChild(span2);
+
+    function typePart1() {
+      if (i < text1.length) {
+        span1.textContent += text1[i++];
+        setTimeout(typePart1, speed);
+      } else {
+        i = 0;
+        setTimeout(typePart2, 200);
+      }
+    }
+    function typePart2() {
+      if (i < text2.length) {
+        span2.textContent += text2[i++];
+        setTimeout(typePart2, speed);
+      }
+    }
+    typePart1();
+  }
+
+  const heroTitle = document.getElementById('hero-title');
+  if (heroTitle) typeWriter(heroTitle, 'Daniel', 'Noffs');
+
+  // ==========================================
+  // SCROLL REVEAL
+  // ==========================================
+  const revealObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        revealObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => {
+    revealObserver.observe(el);
+  });
+
+  // ==========================================
+  // CONTADOR ANIMADO
+  // ==========================================
+  function animateCounter(el) {
+    const target = parseInt(el.dataset.count);
+    const suffix = el.dataset.suffix || '';
+    const duration = 1800;
+    const step = 16;
+    const increment = target / (duration / step);
+    let current = 0;
+
+    const timer = setInterval(() => {
+      current += increment;
+      if (current >= target) {
+        current = target;
+        clearInterval(timer);
+        // Formatação especial para 3000 → "3k+"
+        if (target === 3000) { el.textContent = '3k+'; return; }
+      }
+      el.textContent = Math.floor(current) + suffix;
+    }, step);
+  }
+
+  const counterObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        animateCounter(e.target);
+        counterObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  document.querySelectorAll('[data-count]').forEach(el => {
+    counterObserver.observe(el);
+  });
+
+  // ==========================================
+  // PARALLAX NO HERO
+  // ==========================================
+  window.addEventListener('scroll', () => {
+    const video = document.querySelector('.hero-video');
+    if (video) {
+      video.style.transform = `translateY(${window.scrollY * 0.3}px)`;
+    }
+  }, { passive: true });
+
 </script>
+
+<!-- BOTÃO WHATSAPP FLUTUANTE -->
+<a href="https://wa.me/5511944655777?text=Olá%20Daniel!%20Vim%20pelo%20site%20e%20gostaria%20de%20saber%20mais%20sobre%20os%20seus%20serviços." target="_blank" class="wpp-float" aria-label="WhatsApp">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
 
 </body>
 </html>
